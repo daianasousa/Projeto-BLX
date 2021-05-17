@@ -1,9 +1,0 @@
-{
- 
-     "python.pythonPath": "C:\\Users\\sousa\\AppData\\Local\\Programs\\Python\\Python38\\python.exe",
-     "files.exclude": {
-         "**/_pycache_":true,
-         "**/_init_.py":true
-     }
-
-}
