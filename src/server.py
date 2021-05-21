@@ -1,21 +1,24 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.routers import rotas_produtos, rotas_usuarios
+from src.routers import rotas_produtos, rotas_usuarios, rotas_pedidos
 
 app = FastAPI()
 
 # CORS
-origins = ['http://localhost:3000',
-           'https://myapp.vercel.com']
+origins = ['http://localhost:3000', 
+            'http://myapp.vercel.com']
 
-app.add_middleware(CORSMiddleware,
-                   allow_origins=origins,
-                   allow_credentials=True,
-                   allow_methods=["*"],
-                   allow_headers=["*"],)
+app.add_middleware(CORSMiddleware, 
+                    allow_origins=origins,
+                    allow_credentials=True,
+                    allow_methods=["*"],
+                    allow_headers=["*"],)
 
-# Rotas PRODUTOS
+#Rotas PRODUTOS
 app.include_router(rotas_produtos.router)
 
-# USUARIOS
+#USUARIOS
 app.include_router(rotas_usuarios.router)
+
+#Pedidos
+app.include_router(rotas_pedidos.router)

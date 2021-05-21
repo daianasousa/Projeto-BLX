@@ -9,9 +9,6 @@ from src.infra.sqlalchemy.repositorios.repositorio_usuario \
 router = APIRouter()
 
 
-
-
-
 @router.post('/signup', status_code=status.HTTP_201_CREATED, response_model=Usuario)
 def signup(usuario: Usuario, session: Session = Depends(get_db)):
     usuario_criado = RepositorioUsuario(session).criar(usuario)
