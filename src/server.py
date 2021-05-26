@@ -15,6 +15,7 @@ app.add_middleware(CORSMiddleware,
                     allow_headers=["*"],)
 
 #Rotas PRODUTOS
+
 app.include_router(rotas_produtos.router)
 
 #USUARIOS
