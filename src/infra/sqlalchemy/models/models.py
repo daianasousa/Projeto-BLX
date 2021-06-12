@@ -8,8 +8,8 @@ class Usuario(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     nome = Column(String)
-    telefone = Column(String)
     senha = Column(String)
+    telefone = Column(String)
 
     produtos = relationship('Produto', back_populates='usuario')
     pedidos = relationship('Pedido', back_populates='usuario')
@@ -38,8 +38,10 @@ class Pedido(Base):
     tipo_entrega = Column(String)
     observacao = Column(String)
 
-    usuario_id = Column(Integer, ForeignKey('usuario.id', name='fk_pedido_usuario'))
-    produto_id = Column(Integer, ForeignKey('produto.id', name='fk_pedido_produto'))
+    usuario_id = Column(Integer, ForeignKey(
+        'usuario.id', name='fk_pedido_usuario'))
+    produto_id = Column(Integer, ForeignKey(
+        'produto.id', name='fk_pedido_produto'))
 
     usuario = relationship('Usuario', back_populates='pedidos')
     produto = relationship('Produto')

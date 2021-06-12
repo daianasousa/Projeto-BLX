@@ -1,40 +1,54 @@
 from fastapi import APIRouter, status, Depends, HTTPException
 from typing import List
 from sqlalchemy.orm import Session
-from src.schemas.schemas import Produto, ProdutoSimples
+from src.schemas.schemas import Produto, ProdutoSimples, Usuario
 from src.infra.sqlalchemy.config.database import get_db
 from src.infra.sqlalchemy.repositorios.repositorio_produto \
     import RepositorioProduto
+from src.routers.auth_utils import obter_usuario_logado
 
 router = APIRouter()
 
-@router.post('/produtos',
-             status_code=status.HTTP_201_CREATED,
-            response_model=ProdutoSimples)
 
-def criar_produto(produto: Produto, db: Session = Depends(get_db)):
+@router.post('/produtos',
+            status_code=status.HTTP_201_CREATED,
+            response_model=Produto)
+def criar_produto(
+    produto: Produto,
+    usuario: Usuario = Depends(obter_usuario_logado), db: Session = Depends(get_db)):
     produto_criado = RepositorioProduto(db).criar(produto)
     return produto_criado
+
 
 @router.get('/produtos', response_model=List[Produto])
 def listar_produtos(db: Session = Depends(get_db)):
     produtos = RepositorioProduto(db).listar()
     return produtos
+    
 
-@router.get('/produtos/{id}')
+'''@router.get('/produtos/{id}')
 def exibir_produto(id: int, session: Session = Depends(get_db)):
     produto_localizado = RepositorioProduto(session).buscarPorId(id)
     if not produto_localizado:
-        raise HTTPException(status_code=404, detail='Não Localizado produto')
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f'Produto com o ID {id} não localizado')
     return produto_localizado
+'''
 
 @router.put('/produtos/{id}', response_model=ProdutoSimples)
-def atualizar_produto(id: int, produto: Produto, session: Session = Depends(get_db)):
+def atualizar_produto(
+    id: int,
+    produto: Produto,
+    session: Session = Depends(get_db)):
     RepositorioProduto(session).editar(id, produto)
     produto.id = id
     return produto
 
+
 @router.delete('/produtos/{id}')
 def remover_produto(id: int, session: Session = Depends(get_db)):
-    RepositorioProduto(session).remover(id)
-    return
+    excluir = RepositorioProduto(session).remover(id)
+    if not excluir:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"Produto por ID {id} não localizado!")
+    return excluir

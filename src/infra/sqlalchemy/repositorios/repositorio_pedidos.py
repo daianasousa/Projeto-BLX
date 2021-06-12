@@ -1,6 +1,6 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, query
 from typing import List
-from sqlalchemy import select
+from sqlalchemy.sql.expression import select
 from sqlalchemy.sql.functions import mode
 from src.schemas import schemas
 from src.infra.sqlalchemy.models import models
@@ -25,24 +25,21 @@ class RepositorioPedido():
         return db_pedidos
 
 
-    def buscar_por_id(self, id: int):
-        consulta = select(models.Pedido).where(models.Pedido.id == id)
-        pedido = self.session.execute(consulta).scalars().all()
+    def buscar_por_id(self, id: int) -> models.Pedido:
+        query = select(models.Pedido).where(models.Pedido.id == id)
+        pedido = self.session.execute(query).scalars().one()
         return pedido
 
-
-    def listar(self):
-        pedidos = self.session.query(models.Pedido).all()
-        return pedidos
-
-
     def listar_meus_pedidos_por_usuario_id(self, usuario_id: int):
-        usuario = select(models.Pedido).where(models.Pedido.usuario_id == usuario_id)
-        meus_pedidos = self.session.execute(usuario).scalars().all()
+        query = select(models.Pedido).where(
+            models.Pedido.usuario_id == usuario_id)
+        meus_pedidos = self.session.execute(query).scalars().all()
         return meus_pedidos
 
 
     def listar_minhas_vendas_por_usuario_id(self, usuario_id: int):
-        usuario = select(models.Pedido).join_from(models.Pedido, models.Produto).where(models.Produto.usuario_id == usuario_id)
-        minhas_vendas = self.session.execute(usuario).scalars().all()
-        return minhas_vendas
+        query = select(models.Pedido)\
+            .join_from(models.Pedido, models.Produto)\
+            .where(models.Produto.usuario_id == usuario_id)
+        pedidos = self.session.execute(query).scalars().all()
+        return pedidos

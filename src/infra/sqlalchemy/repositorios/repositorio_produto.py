@@ -29,7 +29,6 @@ class RepositorioProduto():
         produto = self.session.execute(consulta).first()
         return produto
 
-
     def editar(self, id: int, produto: schemas.Produto):
         update_stmt = update(models.Produto).where(
             models.Produto.id == id).values(nome=produto.nome,
@@ -41,9 +40,11 @@ class RepositorioProduto():
         self.session.commit()
 
     def remover(self, id: int):
-        delete_stmt = delete(models.Produto).where(
+        exibir = self.session.query(models.Produto)
+        if exibir:= exibir.filter(
             models.Produto.id == id
-        )
-
-        self.session.execute(delete_stmt)
-        self.session.commit()
+        ).first():
+            self.session.delete(exibir)
+            self.session.commit()
+            return {'Mensagem': f'Produto {exibir.nome} removido com sucesso!.'}
+        return {'Mensagem': f'Produto {id} não encontrado!.'}
