@@ -1,7 +1,5 @@
-from sqlalchemy.orm import Session, query
-from typing import List
+from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import select
-from sqlalchemy.sql.functions import mode
 from src.schemas import schemas
 from src.infra.sqlalchemy.models import models
 
@@ -41,5 +39,5 @@ class RepositorioPedido():
         query = select(models.Pedido)\
             .join_from(models.Pedido, models.Produto)\
             .where(models.Produto.usuario_id == usuario_id)
-        pedidos = self.session.execute(query).scalars().all()
-        return pedidos
+        vendas = self.session.execute(query).scalars().all()
+        return vendas

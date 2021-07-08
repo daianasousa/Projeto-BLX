@@ -49,7 +49,6 @@ class Produto(BaseModel):
     preco: float
     disponivel: bool = False
     usuario_id: Optional[int]
-    usuario: Optional[UsuarioSimples]
 
     class Config:
         orm_mode = True
@@ -59,7 +58,7 @@ class Pedido(BaseModel):
     id: Optional[int] = None
     quantidade: int
     local_entrega: str
-    tipo_entrega: str
+    tipo_entrega: Optional[str]
     observacao: Optional[str] = 'Sem observações'
 
     usuario_id: Optional[int]
@@ -74,9 +73,11 @@ class Pedido(BaseModel):
 class PedidoSimples(BaseModel):
     id: Optional[int] = None
     quantidade: int
-    local_de_entrega: str
-    observacoes: Optional[str] = 'Sem observações'
+    local_entrega: Optional[str]
+    observacao: Optional[str] = 'Sem observações'
+
     produto: Optional[ProdutoSimples]
+
 
     class Config:
         orm_mode = True

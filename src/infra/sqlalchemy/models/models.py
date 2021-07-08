@@ -23,7 +23,6 @@ class Produto(Base):
     detalhes = Column(String)
     preco = Column(Float)
     disponivel = Column(Boolean)
-    tamanhos = Column(String)
     usuario_id = Column(Integer, ForeignKey('usuario.id', name='fk_usuario'))
 
     usuario = relationship('Usuario', back_populates='produtos')

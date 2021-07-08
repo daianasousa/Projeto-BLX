@@ -9,44 +9,47 @@ from src.routers.auth_utils import obter_usuario_logado
 
 router = APIRouter()
 
-
+#Cadastrar Produtos
 @router.post('/produtos',
             status_code=status.HTTP_201_CREATED,
-            response_model=Produto)
+            response_model=ProdutoSimples)
 def criar_produto(
     produto: Produto,
-    usuario: Usuario = Depends(obter_usuario_logado), db: Session = Depends(get_db)):
+    usuario: Usuario = Depends(obter_usuario_logado),
+    db: Session = Depends(get_db)):
+    produto.usuario_id = usuario.id
     produto_criado = RepositorioProduto(db).criar(produto)
     return produto_criado
 
-
-@router.get('/produtos', response_model=List[Produto])
+#Listar Produtos Cadastrados
+@router.get('/produtos', response_model=List[ProdutoSimples])
 def listar_produtos(db: Session = Depends(get_db)):
     produtos = RepositorioProduto(db).listar()
     return produtos
     
-
-'''@router.get('/produtos/{id}')
+@router.get('/produtos/{id}')
 def exibir_produto(id: int, session: Session = Depends(get_db)):
     produto_localizado = RepositorioProduto(session).buscarPorId(id)
     if not produto_localizado:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f'Produto com o ID {id} não localizado')
+            status_code=status.HTTP_404_NOT_FOUND, detail=f'Não há um produto com o id = {id}')
     return produto_localizado
-'''
 
 @router.put('/produtos/{id}', response_model=ProdutoSimples)
 def atualizar_produto(
-    id: int,
-    produto: Produto,
-    session: Session = Depends(get_db)):
+        id: int,
+        produto: Produto,
+        usuario: Usuario = Depends(obter_usuario_logado),
+        session: Session = Depends(get_db)):
+    produto.usuario_id = usuario.id
     RepositorioProduto(session).editar(id, produto)
     produto.id = id
     return produto
 
 
 @router.delete('/produtos/{id}')
-def remover_produto(id: int, session: Session = Depends(get_db)):
+def remover_produto(id: int, 
+    session: Session = Depends(get_db)):
     excluir = RepositorioProduto(session).remover(id)
     if not excluir:
         raise HTTPException(
